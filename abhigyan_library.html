@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>अभिज्ञान लाइब्रेरी - स्मार्ट मैनेजमेंट ऐप</title>
+    <style>
+        /* === THEME & COLOR VARIABLES (ONLY LIGHT & DARK MODE) === */
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #e0e7ff;
+            --bg-main: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --radius: 14px;
+            --shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Dark Mode Theme */
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-dark: #1e1b4b;
+            --primary-light: #312e81;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* === BASE & ANTI-COPY STYLES === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Devanagari', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 50px;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        input, select {
+            -webkit-user-select: auto;
+            user-select: auto;
+            font-family: inherit;
+        }
+
+        /* === HEADER === */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #ffffff;
+            padding: 14px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .brand-sub {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* Strict Two-Mode Switcher (Light & Dark) */
+        .theme-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.28);
+            padding: 4px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .theme-btn {
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6px 14px;
+            border-radius: 24px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        .theme-btn.active {
+            background: #ffffff;
+            color: #1e1b4b;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        /* === CONTAINER & GRID === */
+        .container {
+            max-width: 1200px;
+            margin: 18px auto 0;
+            padding: 0 14px;
+        }
+
+        /* === OWNER PROFILE CARD === */
+        .owner-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .owner-info h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .owner-info p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            padding: 14px 16px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary);
+        }
+        .stat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .stat-val {
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        /* === ALERT BANNER === */
+        .alert-banner {
+            background: var(--danger-bg);
+            border-left: 6px solid var(--danger);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            color: #7f1d1d;
+        }
+        .alert-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: 800;
+            font-size: 0.98rem;
+        }
+        .alert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 10px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .alert-item {
+            background: #ffffff;
+            border: 1px solid #fca5a5;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            color: #1e293b;
+        }
+
+        /* === CARD STYLING === */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 18px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .card-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-title {
+            font-size: 1.08rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+        }
+
+        /* === VISUAL SEAT MAP === */
+        .legend-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.76rem;
+            align-items: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-box {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+            gap: 8px;
+            max-height: 270px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+        .seat-box {
+            height: 58px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 4px;
+            text-align: center;
+            transition: transform 0.15s ease;
+        }
+        .seat-box:active {
+            transform: scale(0.93);
+        }
+        .seat-vacant {
+            background: var(--bg-main);
+            border: 2px dashed var(--text-muted);
+            color: var(--text-muted);
+        }
+        .seat-active {
+            background: var(--success);
+            color: #fff;
+            border: 2px solid #059669;
+        }
+        .seat-due {
+            background: var(--warning);
+            color: #fff;
+            border: 2px solid #d97706;
+        }
+        .seat-expired {
+            background: var(--danger);
+            color: #fff;
+            border: 2px solid #dc2626;
+            animation: pulse 1.6s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.72; }
+        }
+
+        /* === MAIN LAYOUT (FORM + TABLE) === */
+        .main-split {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 980px) {
+            .main-split {
+                grid-template-columns: 370px 1fr;
+            }
+        }
+
+        /* === FORM CONTROLS === */
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .sub-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .sub-box-title {
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+        input, select {
+            width: 100%;
+            padding: 9px 11px;
+            border-radius: 9px;
+            border: 1.5px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 0.88rem;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* === BUTTONS === */
+        .btn {
+            border: none;
+            border-radius: 9px;
+            padding: 10px 14px;
+            font-weight: 700;
+            font-size: 0.86rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: transform 0.12s ease, opacity 0.15s;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            width: 100%;
+        }
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            border-radius: 7px;
+        }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-warning { background: var(--warning); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-purple { background: #7c3aed; color: #fff; }
+        .btn-muted { background: #64748b; color: #fff; }
+
+        /* === TABLE === */
+        .table-wrap {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 680px;
+        }
+        th {
+            background: var(--bg-main);
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            padding: 11px 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.86rem;
+            vertical-align: middle;
+        }
+        .badge {
+            padding: 4px 9px;
+            border-radius: 20px;
+            font-size: 0.71rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-active { background: var(--success-bg); color: #065f46; }
+        .badge-soon { background: var(--warning-bg); color: #92400e; }
+        .badge-expired { background: var(--danger-bg); color: #991b1b; }
+
+        /* === MODALS === */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-card {
+            background: var(--bg-card);
+            color: var(--text-main);
+            width: 100%;
+            max-width: 460px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-color);
+        }
+        .modal-head {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #fff;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            padding: 18px;
+        }
+        .receipt-box {
+            background: #ffffff;
+            color: #0f172a;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.35);
+        }
+        .receipt-print-area {
+            padding: 20px;
+            border: 3px double #312e81;
+            margin: 12px;
+            border-radius: 10px;
+        }
+        .receipt-table {
+            width: 100%;
+            min-width: unset;
+            margin: 12px 0;
+            border: 1px solid #cbd5e1;
+        }
+        .receipt-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e293b;
+        }
+
+        /* === TOAST NOTIFICATION === */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            z-index: 200;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Print Media Query */
+        @media print {
+            body * { visibility: hidden; }
+            #receiptModal, #receiptPrintableArea, #receiptPrintableArea * {
+                visibility: visible;
+            }
+            #receiptModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: #fff !important;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;">
+
+    <!-- HEADER -->
+    <header class="app-header no-print">
+        <div class="header-inner">
+            <div class="brand-box">
+                <div class="brand-icon">📚</div>
+                <div>
+                    <div class="brand-title">अभिज्ञान लाइब्रेरी</div>
+                    <div class="brand-sub">ऑनर: Himanshu Kumar Mudgal | 📞 9784443047</div>
+                </div>
+            </div>
+
+            <!-- Strict Two-Mode Switcher -->
+            <div class="theme-bar">
+                <button type="button" id="lightModeBtn" class="theme-btn active" onclick="setTheme('light')">
+                    ☀️ Light Mode
+                </button>
+                <button type="button" id="darkModeBtn" class="theme-btn" onclick="setTheme('dark')">
+                    🌙 Dark Mode
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container no-print">
+
+        <!-- OWNER PROFILE CARD -->
+        <div class="owner-card">
+            <div class="owner-info">
+                <h4>👨‍💼 लाइब्रेरी ओनर: Himanshu Kumar Mudgal</h4>
+                <p>📍 पता: Near by Jain juice, Gupteshwar Road, Dausa</p>
+                <p>📧 ईमेल: himanshu050980@gmail.com | 📞 व्हाट्सएप: 9784443047</p>
+            </div>
+            <div>
+                <a href="https://wa.me/919784443047?text=नमस्ते%20हिमांशु%20जी," target="_blank" class="btn btn-sm" style="background:#25D366; color:#fff;">💬 ऑनर WhatsApp</a>
+            </div>
+        </div>
+
+        <!-- OWNER REMINDER ALERT SECTION -->
+        <div id="reminderSection" class="alert-banner hidden">
+            <div class="alert-header">
+                <span>🔔 लाइब्रेरी ओनर रिमाइंडर अलर्ट (महीना समाप्त / फीस बकाया)</span>
+                <span id="alertCountBadge" class="badge badge-expired">0 अलर्ट</span>
+            </div>
+            <div id="alertList" class="alert-grid"></div>
+        </div>
+
+        <!-- SUMMARY STATS -->
+        <div class="stats-grid">
+            <div class="stat-card" style="border-left-color: var(--primary);">
+                <div class="stat-label">कुल विद्यार्थी</div>
+                <div class="stat-val" id="statTotal">0</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #14b8a6;">
+                <div class="stat-label">खाली सीटें (Vacant)</div>
+                <div class="stat-val" id="statVacant" style="color: #0d9488;">0</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--success);">
+                <div class="stat-label">फीस जमा (Paid)</div>
+                <div class="stat-val" id="statPaid" style="color: var(--success);">0</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--warning);">
+                <div class="stat-label">चालू महीना - फीस बकाया</div>
+                <div class="stat-val" id="statFeeDue" style="color: var(--warning);">0</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--danger);">
+                <div class="stat-label">महीना समाप्त (Expired)</div>
+                <div class="stat-val" id="statExpired" style="color: var(--danger);">0</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #8b5cf6;">
+                <div class="stat-label">प्राप्त शुल्क संग्रह</div>
+                <div class="stat-val" id="statRevenue" style="color: #8b5cf6;">₹0</div>
+            </div>
+        </div>
+
+        <!-- VISUAL SEAT MAP -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">💺 लाइब्रेरी विजुअल सीट मैप (Interactive Map)</div>
+                    <div style="font-size: 0.76rem; color: var(--text-muted);">खाली सीट पर क्लिक करके एडमिशन करें, भरी सीट पर क्लिक करके फीस या विवरण देखें।</div>
+                </div>
+                <div class="legend-bar">
+                    <div class="legend-item"><span class="legend-box" style="border: 2px dashed #64748b;"></span> खाली</div>
+                    <div class="legend-item"><span class="legend-box" style="background: var(--success);"></span> फीस जमा</div>
+                    <div class="legend-item"><span class="legend-box" style="background: var(--warning);"></span> फीस बकाया / जल्द समाप्त</div>
+                    <div class="legend-item"><span class="legend-box" style="background: var(--danger);"></span> महीना समाप्त</div>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <b>कुल सीटें:</b>
+                        <input type="number" id="totalSeatsInput" min="1" max="500" style="width: 65px; padding: 4px 6px; text-align:center; font-weight:bold;" onchange="updateTotalSeats(this.value)">
+                    </div>
+                </div>
+            </div>
+            <div id="seatMapGrid" class="seat-grid"></div>
+        </div>
+
+        <!-- FORM & TABLE SPLIT -->
+        <div class="main-split">
+            
+            <!-- ADD / EDIT FORM -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title" id="formTitle">➕ नया विद्यार्थी जोड़ें</div>
+                </div>
+                <form id="studentForm">
+                    <input type="hidden" id="editId">
+                    
+                    <div class="form-group">
+                        <label>विद्यार्थी का नाम *</label>
+                        <input type="text" id="name" required placeholder="उदा. अमन वर्मा">
+                    </div>
+
+                    <div class="form-row form-group">
+                        <div>
+                            <label>सीट नंबर *</label>
+                            <input type="text" id="seatNo" required placeholder="S-1" style="font-weight:700; color:var(--primary);">
+                        </div>
+                        <div>
+                            <label>मोबाइल नंबर *</label>
+                            <input type="tel" id="phone" required pattern="[0-9]{10}" placeholder="10 अंकों का नंबर">
+                        </div>
+                    </div>
+
+                    <div class="form-row form-group">
+                        <div>
+                            <label>मासिक फीस (₹) *</label>
+                            <input type="number" id="feeAmount" value="600" required style="font-weight:700;">
+                        </div>
+                        <div>
+                            <label>शिफ्ट (Shift)</label>
+                            <select id="shift">
+                                <option value="Full Day">Full Day (पूरा दिन)</option>
+                                <option value="Morning">Morning (सुबह)</option>
+                                <option value="Evening">Evening (शाम)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Box 1: Fixed Monthly Cycle -->
+                    <div class="sub-box">
+                        <div class="sub-box-title">
+                            <span>📅 1. विद्यार्थी का महीना साइकिल</span>
+                            <span style="font-size: 0.66rem; color: var(--text-muted); font-weight:600;">(फिक्स तिथि)</span>
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label>महीना शुरू तिथि *</label>
+                                <input type="date" id="cycleStartDate" required>
+                            </div>
+                            <div>
+                                <label>महीना समाप्त तिथि *</label>
+                                <input type="date" id="expiryDate" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Box 2: Separate Fee Payment Option -->
+                    <div class="sub-box">
+                        <div class="sub-box-title">
+                            <span>💰 2. फीस जमा करने का विकल्प</span>
+                            <span style="font-size: 0.66rem; color: var(--text-muted); font-weight:600;">(कभी भी जमा करें)</span>
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label>चालू महीने की फीस स्थिति</label>
+                                <select id="feeStatus" onchange="toggleFormPaidDate()">
+                                    <option value="DUE">⏳ फीस बकाया (Due)</option>
+                                    <option value="PAID">✅ फीस जमा (Paid)</option>
+                                </select>
+                            </div>
+                            <div id="paidDateWrap" class="hidden">
+                                <label>फीस जमा करने की तिथि</label>
+                                <input type="date" id="paidDate">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:8px; margin-top:14px;">
+                        <button type="submit" id="submitBtn" class="btn btn-primary">💾 रिकॉर्ड सेव करें</button>
+                        <button type="button" id="cancelEditBtn" onclick="resetForm()" class="btn btn-muted hidden">रद्द करें</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- STUDENT LIST TABLE -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📋 विद्यार्थियों का रिकॉर्ड व अलग फीस नियंत्रण</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:8px; width: 100%; max-width: 440px;">
+                        <input type="text" id="searchInput" oninput="renderApp()" placeholder="🔍 नाम, सीट या फोन खोजें..." style="flex:1; padding: 7px 10px;">
+                        <select id="filterStatus" onchange="renderApp()" style="width: 155px; padding: 7px 8px;">
+                            <option value="ALL">सभी (All)</option>
+                            <option value="FEE_DUE">फीस बकाया (Due)</option>
+                            <option value="EXPIRED">महीना समाप्त</option>
+                            <option value="SOON">जल्द समाप्त (3 दिन)</option>
+                            <option value="ACTIVE">फीस जमा व सक्रिय</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>सीट नं.</th>
+                                <th>विद्यार्थी</th>
+                                <th>महीना साइकिल (शुरू - समाप्त)</th>
+                                <th>फीस स्थिति (अलग रिकॉर्ड)</th>
+                                <th>वैधता स्टेटस</th>
+                                <th style="text-align:center;">फीस जमा / एक्शन</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="emptyState" style="text-align:center; padding: 30px; color: var(--text-muted);" class="hidden">
+                    कोई विद्यार्थी रिकॉर्ड मौजूद नहीं है।
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SEPARATE FEE PAYMENT & CYCLE RENEWAL MODAL -->
+    <div id="feePaymentModal" class="modal-overlay no-print">
+        <div class="modal-card">
+            <div class="modal-head">
+                <div>
+                    <div style="font-weight:800; font-size:1rem;">💰 फीस जमा एवं महीना साइकिल प्रबंधन</div>
+                    <div id="feeModalStudentInfo" style="font-size:0.76rem; opacity:0.9;"></div>
+                </div>
+                <button type="button" onclick="closeFeeModal()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; line-height:1;">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="feeModalStudentId">
+
+                <div class="sub-box" style="margin-bottom:14px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                        <span style="color:var(--text-muted);">फिक्स महीना शुरू तिथि:</span>
+                        <b id="feeModalCycleStart" style="color:var(--primary);"></b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                        <span style="color:var(--text-muted);">फिक्स महीना समाप्त तिथि:</span>
+                        <b id="feeModalCycleEnd" style="color:var(--danger);"></b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; padding-top:4px; border-top:1px dashed var(--border-color);">
+                        <span style="color:var(--text-muted);">निर्धारित मासिक फीस:</span>
+                        <b id="feeModalFeeAmt"></b>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:18px;">
+                    <div style="font-size:0.8rem; font-weight:800; color:var(--primary); text-transform:uppercase; margin-bottom:8px;">
+                        1. चालू महीने की फीस जमा दर्ज करें (साइकिल नहीं बदलेगा)
+                    </div>
+                    <div class="form-row form-group">
+                        <div>
+                            <label>फीस की स्थिति</label>
+                            <select id="modalFeeStatusSelect" onchange="toggleModalPaidDateInput()">
+                                <option value="PAID">✅ फीस जमा (Paid)</option>
+                                <option value="DUE">⏳ फीस बकाया (Due)</option>
+                            </select>
+                        </div>
+                        <div id="modalPaidDateGroup">
+                            <label>वास्तविक जमा तिथि</label>
+                            <input type="date" id="modalPaidDateInput">
+                        </div>
+                    </div>
+                    <button type="button" onclick="saveSeparateFeePayment()" class="btn btn-success" style="width:100%;">
+                        ✓ केवल फीस रिकॉर्ड सेव करें
+                    </button>
+                </div>
+
+                <div style="padding-top:14px; border-top:1px solid var(--border-color);">
+                    <div style="font-size:0.8rem; font-weight:800; color:var(--text-main); text-transform:uppercase; margin-bottom:6px;">
+                        2. महीना समाप्त होने पर अगला महीना शुरू करें
+                    </div>
+                    <div class="form-row">
+                        <button type="button" onclick="advanceNextMonthCycle('DUE')" class="btn btn-warning btn-sm" style="padding:10px 8px;">
+                            🔄 नया महीना (फीस बकाया)
+                        </button>
+                        <button type="button" onclick="advanceNextMonthCycle('PAID')" class="btn btn-primary btn-sm" style="padding:10px 8px;">
+                            🔄 नया महीना + आज फीस जमा
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRMATION MODAL -->
+    <div id="confirmModal" class="modal-overlay no-print">
+        <div class="modal-card" style="max-width: 390px;">
+            <div class="modal-head">
+                <div style="font-weight:800; font-size:0.95rem;" id="confirmModalTitle">पुष्टि करें</div>
+            </div>
+            <div class="modal-body">
+                <p id="confirmModalText" style="font-size:0.88rem; margin-bottom:16px;"></p>
+                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                    <button type="button" onclick="closeConfirmModal()" class="btn btn-sm btn-muted">रद्द करें</button>
+                    <button type="button" id="confirmModalOkBtn" class="btn btn-sm btn-danger">हाँ, आगे बढ़ें</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEE RECEIPT MODAL -->
+    <div id="receiptModal" class="modal-overlay">
+        <div class="receipt-box">
+            <div id="receiptPrintableArea" class="receipt-print-area">
+                <div style="text-align:center; border-bottom: 2px solid #312e81; padding-bottom: 10px; margin-bottom: 12px;">
+                    <h2 style="color:#312e81; font-size: 1.4rem; font-weight:800;">अभिज्ञान लाइब्रेरी</h2>
+                    <p style="font-size: 0.75rem; color:#475569; font-weight:600;">Near by Jain juice, Gupteshwar Road, Dausa</p>
+                    <p style="font-size: 0.72rem; color:#475569; font-weight:600;">संचालक: Himanshu Kumar Mudgal (📞 9784443047)</p>
+                    <span style="display:inline-block; background:#312e81; color:#fff; font-size:0.7rem; padding:3px 12px; border-radius:20px; margin-top:6px; font-weight:700;">
+                        मासिक फीस रसीद (FEE RECEIPT)
+                    </span>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:10px; color:#334155;">
+                    <div><b>रसीद क्र.:</b> <span id="rcptNo"></span></div>
+                    <div><b>रसीद दिनांक:</b> <span id="rcptPrintDate"></span></div>
+                </div>
+
+                <table class="receipt-table">
+                    <tbody>
+                        <tr>
+                            <td><b>विद्यार्थी का नाम:</b></td>
+                            <td id="rcptName" style="font-weight:700;"></td>
+                        </tr>
+                        <tr>
+                            <td><b>आवंटित सीट नं.:</b></td>
+                            <td id="rcptSeat" style="font-weight:800; color:#4f46e5;"></td>
+                        </tr>
+                        <tr>
+                            <td><b>मोबाइल नंबर:</b></td>
+                            <td id="rcptPhone"></td>
+                        </tr>
+                        <tr>
+                            <td><b>शिफ्ट (Shift):</b></td>
+                            <td id="rcptShift"></td>
+                        </tr>
+                        <tr>
+                            <td><b>महीना अवधि (Cycle):</b></td>
+                            <td id="rcptValidity" style="font-weight:700; color:#059669;"></td>
+                        </tr>
+                        <tr>
+                            <td><b>फीस जमा तिथि:</b></td>
+                            <td id="rcptPaidDate" style="font-weight:700;"></td>
+                        </tr>
+                        <tr style="background:#eef2ff;">
+                            <td style="font-weight:800; color:#312e81;">कुल शुल्क स्थिति:</td>
+                            <td id="rcptAmount" style="font-weight:800; font-size:1.05rem; color:#312e81;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; font-size:0.72rem; color:#475569; margin-top:22px; padding-top:10px; border-top:1px dashed #cbd5e1;">
+                    <div>
+                        <b>नियम:</b><br>
+                        1. लाइब्रेरी में पूर्ण शांति बनाए रखें।<br>
+                        2. जमा फीस वापस या ट्रांसफर नहीं होगी।
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="width:100px; border-bottom:1px solid #334155; margin-bottom:4px;"></div>
+                        <b style="color:#312e81;">Himanshu Kumar Mudgal</b>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-print" style="background:#f1f5f9; padding:12px 18px; display:flex; justify-content:flex-end; gap:10px;">
+                <button onclick="window.print()" class="btn btn-sm btn-primary" style="width:auto;">🖨️ प्रिंट / Save PDF</button>
+                <button onclick="closeReceiptModal()" class="btn btn-sm btn-muted">बंद करें</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast">रिकॉर्ड सेव हो गया!</div>
+
+    <script>
+        document.addEventListener('keydown', function(e) {
+            const isInput = ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName);
+            if (!isInput && (e.ctrlKey || e.metaKey)) {
+                if (['c', 'a', 'u', 's', 'x', 'p'].includes(e.key.toLowerCase())) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+
+        function escapeHTML(str) {
+            return String(str || '').replace(/[&<>"']/g, function(m) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+            });
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2600);
+        }
+
+        let confirmActionCallback = null;
+        function openConfirmModal(title, message, onConfirm) {
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalText').innerText = message;
+            confirmActionCallback = onConfirm;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+            confirmActionCallback = null;
+        }
+        document.getElementById('confirmModalOkBtn').addEventListener('click', function() {
+            if (typeof confirmActionCallback === 'function') {
+                confirmActionCallback();
+            }
+            closeConfirmModal();
+        });
+
+        const THEME_KEY = 'abhigyan_lib_theme_v2';
+        function setTheme(mode) {
+            const lightBtn = document.getElementById('lightModeBtn');
+            const darkBtn = document.getElementById('darkModeBtn');
+
+            if (mode === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                darkBtn.classList.add('active');
+                lightBtn.classList.remove('active');
+                localStorage.setItem(THEME_KEY, 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                lightBtn.classList.add('active');
+                darkBtn.classList.remove('active');
+                localStorage.setItem(THEME_KEY, 'light');
+            }
+        }
+        const savedTheme = localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+        setTheme(savedTheme);
+
+        const DEFAULT_FEE = 600;
+        const STORAGE_KEY = 'abhigyan_library_students_v1';
+        const SEATS_COUNT_KEY = 'abhigyan_library_total_seats_v1';
+
+        let students = [];
+        try {
+            const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            students = raw.map(st => ({
+                ...st,
+                cycleStartDate: st.cycleStartDate || st.joinDate || getTodayISO(),
+                feeStatus: st.feeStatus || 'PAID',
+                paidDate: st.paidDate || (st.feeStatus === 'DUE' ? '' : (st.joinDate || getTodayISO()))
+            }));
+        } catch (err) {
+            students = [];
+        }
+        let totalSeats = Number(localStorage.getItem(SEATS_COUNT_KEY)) || 50;
+
+        const cycleStartInput = document.getElementById('cycleStartDate');
+        const expiryDateInput = document.getElementById('expiryDate');
+        const feeAmountInput = document.getElementById('feeAmount');
+        const feeStatusInput = document.getElementById('feeStatus');
+        const paidDateInput = document.getElementById('paidDate');
+        document.getElementById('totalSeatsInput').value = totalSeats;
+
+        function getTodayISO() {
+            const d = new Date();
+            const offset = d.getTimezoneOffset() * 60000;
+            return new Date(d.getTime() - offset).toISOString().split('T')[0];
+        }
+
+        function addOneMonthISO(dateStr) {
+            if (!dateStr) return getTodayISO();
+            const [y, m, day] = dateStr.split('-').map(Number);
+            const next = new Date(y, m, day);
+            const yyyy = next.getFullYear();
+            const mm = String(next.getMonth() + 1).padStart(2, '0');
+            const dd = String(next.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function updateTotalSeats(val) {
+            const num = parseInt(val, 10);
+            if (num > 0 && num <= 500) {
+                totalSeats = num;
+                localStorage.setItem(SEATS_COUNT_KEY, totalSeats);
+                renderApp();
+                showToast(`कुल सीटें ${totalSeats} अपडेट की गईं`);
+            }
+        }
+
+        function toggleFormPaidDate() {
+            const status = feeStatusInput.value;
+            const wrap = document.getElementById('paidDateWrap');
+            if (status === 'PAID') {
+                wrap.classList.remove('hidden');
+                if (!paidDateInput.value) paidDateInput.value = getTodayISO();
+            } else {
+                wrap.classList.add('hidden');
+            }
+        }
+
+        function setDefaultDates() {
+            const todayStr = getTodayISO();
+            cycleStartInput.value = todayStr;
+            expiryDateInput.value = addOneMonthISO(todayStr);
+            feeAmountInput.value = DEFAULT_FEE;
+            feeStatusInput.value = 'DUE';
+            paidDateInput.value = todayStr;
+            toggleFormPaidDate();
+        }
+
+        cycleStartInput.addEventListener('change', (e) => {
+            if (e.target.value) {
+                expiryDateInput.value = addOneMonthISO(e.target.value);
+            }
+        });
+
+        function getDaysRemaining(expiryDateStr) {
+            const today = new Date(getTodayISO());
+            const exp = new Date(expiryDateStr);
+            return Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const parts = dateStr.split('-');
+            return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;
+        }
+
+        function normalizeSeat(seatStr) {
+            return String(seatStr || '').trim().toUpperCase().replace(/^S-?/, '');
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+            renderApp();
+        }
+
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const editId = document.getElementById('editId').value;
+            const name = document.getElementById('name').value.trim();
+            let seatNo = document.getElementById('seatNo').value.trim().toUpperCase();
+            if (/^\d+$/.test(seatNo)) seatNo = 'S-' + seatNo;
+
+            const phone = document.getElementById('phone').value.trim();
+            const feeAmount = Number(document.getElementById('feeAmount').value) || DEFAULT_FEE;
+            const shift = document.getElementById('shift').value;
+            const cycleStartDate = document.getElementById('cycleStartDate').value;
+            const expiryDate = document.getElementById('expiryDate').value;
+            const feeStatus = document.getElementById('feeStatus').value;
+            const paidDate = feeStatus === 'PAID' ? (document.getElementById('paidDate').value || getTodayISO()) : '';
+
+            const seatTaken = students.find(s => 
+                normalizeSeat(s.seatNo) === normalizeSeat(seatNo) && s.id !== editId
+            );
+
+            const performSave = () => {
+                if (editId) {
+                    const idx = students.findIndex(s => s.id === editId);
+                    if (idx !== -1) {
+                        students[idx] = {
+                            id: editId, name, seatNo, phone, feeAmount, shift,
+                            cycleStartDate, expiryDate, feeStatus, paidDate
+                        };
+                        showToast('विद्यार्थी रिकॉर्ड अपडेट हो गया!');
+                    }
+                } else {
+                    students.push({
+                        id: 'STU_' + Date.now(),
+                        name, seatNo, phone, feeAmount, shift,
+                        cycleStartDate, expiryDate, feeStatus, paidDate
+                    });
+                    showToast('नया विद्यार्थी सफलतापूर्वक जोड़ा गया!');
+                }
+                resetForm();
+                saveData();
+            };
+
+            if (seatTaken) {
+                openConfirmModal(
+                    'सीट पहले से आवंटित है',
+                    `सीट "${seatNo}" पहले से "${seatTaken.name}" को आवंटित है। क्या फिर भी सेव करें?`,
+                    performSave
+                );
+            } else {
+                performSave();
+            }
+        });
+
+        function resetForm() {
+            document.getElementById('studentForm').reset();
+            document.getElementById('editId').value = '';
+            document.getElementById('formTitle').innerText = '➕ नया विद्यार्थी जोड़ें';
+            document.getElementById('submitBtn').innerText = '💾 रिकॉर्ड सेव करें';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            setDefaultDates();
+        }
+
+        function selectVacantSeat(seatLabel) {
+            resetForm();
+            document.getElementById('seatNo').value = seatLabel;
+            document.getElementById('name').focus();
+            document.getElementById('studentForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function editStudent(id) {
+            const st = students.find(s => s.id === id);
+            if (!st) return;
+
+            document.getElementById('editId').value = st.id;
+            document.getElementById('name').value = st.name;
+            document.getElementById('seatNo').value = st.seatNo;
+            document.getElementById('phone').value = st.phone;
+            document.getElementById('feeAmount').value = st.feeAmount || DEFAULT_FEE;
+            document.getElementById('shift').value = st.shift;
+            document.getElementById('cycleStartDate').value = st.cycleStartDate;
+            document.getElementById('expiryDate').value = st.expiryDate;
+            document.getElementById('feeStatus').value = st.feeStatus || 'DUE';
+            document.getElementById('paidDate').value = st.paidDate || getTodayISO();
+            toggleFormPaidDate();
+
+            document.getElementById('formTitle').innerText = '✏️ विद्यार्थी विवरण अपडेट करें';
+            document.getElementById('submitBtn').innerText = '🔄 अपडेट सेव करें';
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            document.getElementById('studentForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteStudent(id) {
+            const st = students.find(s => s.id === id);
+            if (!st) return;
+            openConfirmModal(
+                'रिकॉर्ड हटाएं',
+                `क्या आप वाकई "${st.name}" (सीट: ${st.seatNo}) का रिकॉर्ड हटाना चाहते हैं?`,
+                () => {
+                    students = students.filter(s => s.id !== id);
+                    saveData();
+                    showToast('रिकॉर्ड हटाया गया');
+                }
+            );
+        }
+
+        function openFeeModal(id) {
+            const st = students.find(s => s.id === id);
+            if (!st) return;
+
+            document.getElementById('feeModalStudentId').value = st.id;
+            document.getElementById('feeModalStudentInfo').innerText = `${st.name} | सीट: ${st.seatNo} | शिफ्ट: ${st.shift}`;
+            document.getElementById('feeModalCycleStart').innerText = formatDate(st.cycleStartDate);
+            document.getElementById('feeModalCycleEnd').innerText = formatDate(st.expiryDate);
+            document.getElementById('feeModalFeeAmt').innerText = `₹${st.feeAmount || DEFAULT_FEE}`;
+
+            document.getElementById('modalFeeStatusSelect').value = st.feeStatus || 'PAID';
+            document.getElementById('modalPaidDateInput').value = st.paidDate || getTodayISO();
+            toggleModalPaidDateInput();
+
+            document.getElementById('feePaymentModal').classList.add('show');
+        }
+
+        function closeFeeModal() {
+            document.getElementById('feePaymentModal').classList.remove('show');
+        }
+
+        function toggleModalPaidDateInput() {
+            const status = document.getElementById('modalFeeStatusSelect').value;
+            const grp = document.getElementById('modalPaidDateGroup');
+            if (status === 'PAID') {
+                grp.classList.remove('hidden');
+                if (!document.getElementById('modalPaidDateInput').value) {
+                    document.getElementById('modalPaidDateInput').value = getTodayISO();
+                }
+            } else {
+                grp.classList.add('hidden');
+            }
+        }
+
+        function saveSeparateFeePayment() {
+            const id = document.getElementById('feeModalStudentId').value;
+            const st = students.find(s => s.id === id);
+            if (!st) return;
+
+            const newStatus = document.getElementById('modalFeeStatusSelect').value;
+            st.feeStatus = newStatus;
+
+            if (newStatus === 'PAID') {
+                st.paidDate = document.getElementById('modalPaidDateInput').value || getTodayISO();
+                saveData();
+                closeFeeModal();
+                showToast(`${st.name} की फीस जमा दर्ज हो गई!`);
+                openReceiptModal(st.id);
+            } else {
+                st.paidDate = '';
+                saveData();
+                closeFeeModal();
+                showToast(`${st.name} की फीस 'बकाया (Due)' में सेट की गई`);
+            }
+        }
+
+        function advanceNextMonthCycle(newFeeStatus) {
+            const id = document.getElementById('feeModalStudentId').value;
+            const st = students.find(s => s.id === id);
+            if (!st) return;
+
+            const newCycleStart = st.expiryDate || getTodayISO();
+            const newCycleEnd = addOneMonthISO(newCycleStart);
+
+            st.cycleStartDate = newCycleStart;
+            st.expiryDate = newCycleEnd;
+            st.feeStatus = newFeeStatus;
+            st.paidDate = newFeeStatus === 'PAID' ? getTodayISO() : '';
+
+            saveData();
+            closeFeeModal();
+
+            if (newFeeStatus === 'PAID') {
+                showToast(`नया महीना (${formatDate(newCycleStart)} से) शुरू और फीस जमा!`);
+                openReceiptModal(st.id);
+            } else {
+                showToast(`नया महीना (${formatDate(newCycleStart)} से) शुरू, फीस अभी बकाया है!`);
+            }
+        }
+
+        function openReceiptModal(id) {
+            const st = students.find(s => s.id === id);
+            if (!st) return;
+
+            document.getElementById('rcptNo').innerText = 'ABH-' + st.id.slice(-5);
+            document.getElementById('rcptPrintDate').innerText = formatDate(getTodayISO());
+            document.getElementById('rcptName').innerText = st.name;
+            document.getElementById('rcptSeat').innerText = st.seatNo;
+            document.getElementById('rcptPhone').innerText = st.phone;
+            document.getElementById('rcptShift').innerText = st.shift;
+            document.getElementById('rcptValidity').innerText = `${formatDate(st.cycleStartDate)} से ${formatDate(st.expiryDate)} तक`;
+
+            if (st.feeStatus === 'PAID') {
+                document.getElementById('rcptPaidDate').innerText = formatDate(st.paidDate || getTodayISO());
+                document.getElementById('rcptAmount').innerText = `₹${st.feeAmount || DEFAULT_FEE}/- (जमा / Paid)`;
+            } else {
+                document.getElementById('rcptPaidDate').innerText = 'अभी बकाया (Due)';
+                document.getElementById('rcptAmount').innerText = `₹${st.feeAmount || DEFAULT_FEE}/- (बकाया / Due)`;
+            }
+
+            document.getElementById('receiptModal').classList.add('show');
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.remove('show');
+        }
+
+        function renderSeatMap() {
+            const grid = document.getElementById('seatMapGrid');
+            grid.innerHTML = '';
+            let occupiedCount = 0;
+
+            for (let i = 1; i <= totalSeats; i++) {
+                const seatLabel = `S-${i}`;
+                const occupant = students.find(s => normalizeSeat(s.seatNo) === String(i));
+                const cell = document.createElement('div');
+
+                if (occupant) {
+                    occupiedCount++;
+                    const daysLeft = getDaysRemaining(occupant.expiryDate);
+                    const isFeeDue = occupant.feeStatus === 'DUE';
+
+                    let statusClass = 'seat-active';
+                    if (daysLeft < 0) statusClass = 'seat-expired';
+                    else if (isFeeDue || daysLeft <= 3) statusClass = 'seat-due';
+
+                    cell.className = `seat-box ${statusClass}`;
+                    cell.onclick = () => openFeeModal(occupant.id);
+                    cell.innerHTML = `
+                        <span>${seatLabel}</span>
+                        <span style="font-size:0.65rem; font-weight:500; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                            ${escapeHTML(occupant.name.split(' ')[0])}
+                        </span>
+                    `;
+                } else {
+                    cell.className = 'seat-box seat-vacant';
+                    cell.onclick = () => selectVacantSeat(seatLabel);
+                    cell.innerHTML = `
+                        <span>${seatLabel}</span>
+                        <span style="font-size:0.62rem; color:#0d9488;">खाली</span>
+                    `;
+                }
+                grid.appendChild(cell);
+            }
+
+            document.getElementById('statVacant').innerText = Math.max(0, totalSeats - occupiedCount);
+        }
+
+        function renderApp() {
+            renderSeatMap();
+
+            const tbody = document.getElementById('studentTableBody');
+            const alertList = document.getElementById('alertList');
+            const reminderSection = document.getElementById('reminderSection');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('filterStatus').value;
+
+            tbody.innerHTML = '';
+            alertList.innerHTML = '';
+
+            let totalPaid = 0, totalFeeDue = 0, totalExpired = 0, totalRevenue = 0, alertsCount = 0, visibleRows = 0;
+
+            const sorted = [...students].sort((a, b) => {
+                const dA = getDaysRemaining(a.expiryDate);
+                const dB = getDaysRemaining(b.expiryDate);
+                if (dA < 0 && dB >= 0) return -1;
+                if (dB < 0 && dA >= 0) return 1;
+                if (a.feeStatus === 'DUE' && b.feeStatus !== 'DUE') return -1;
+                if (b.feeStatus === 'DUE' && a.feeStatus !== 'DUE') return 1;
+                return dA - dB;
+            });
+
+            sorted.forEach(st => {
+                const daysLeft = getDaysRemaining(st.expiryDate);
+                const fee = Number(st.feeAmount) || DEFAULT_FEE;
+                const isFeeDue = st.feeStatus === 'DUE';
+                const isExpired = daysLeft < 0;
+                const isSoon = daysLeft >= 0 && daysLeft <= 3;
+
+                if (isFeeDue) {
+                    totalFeeDue++;
+                } else {
+                    totalPaid++;
+                    totalRevenue += fee;
+                }
+
+                let cycleBadgeHTML = '';
+                if (isExpired) {
+                    totalExpired++;
+                    cycleBadgeHTML = `<span class="badge badge-expired">महीना समाप्त (${Math.abs(daysLeft)} दिन)</span>`;
+                } else if (isSoon) {
+                    cycleBadgeHTML = `<span class="badge badge-soon">${daysLeft === 0 ? 'आज समाप्त' : daysLeft + ' दिन शेष'}</span>`;
+                } else {
+                    cycleBadgeHTML = `<span class="badge badge-active">सक्रिय (${daysLeft} दिन शेष)</span>`;
+                }
+
+                let feeBadgeHTML = '';
+                if (isFeeDue) {
+                    feeBadgeHTML = `
+                        <span class="badge badge-soon">⏳ बकाया (₹${fee})</span>
+                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">जमा तिथि: अभी नहीं</div>
+                    `;
+                } else {
+                    feeBadgeHTML = `
+                        <span class="badge badge-active">✅ जमा (₹${fee})</span>
+                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">जमा: ${formatDate(st.paidDate)}</div>
+                    `;
+                }
+
+                if (isExpired || isSoon || isFeeDue) {
+                    alertsCount++;
+                    let alertNote = '';
+                    let waMessage = '';
+
+                    if (isExpired) {
+                        alertNote = `महीना समाप्त: ${formatDate(st.expiryDate)} ${isFeeDue ? '(फीस भी बकाया)' : ''}`;
+                        waMessage = `नमस्ते ${st.name}, अभिज्ञान लाइब्रेरी (गुप्तेश्वर रोड, दौसा) में आपकी सीट (${st.seatNo}) का महीना ${formatDate(st.expiryDate)} को समाप्त हो गया है। कृपया मासिक फीस (₹${fee}) जमा कराएं। - Himanshu Kumar Mudgal (9784443047)`;
+                    } else if (isFeeDue) {
+                        alertNote = `महीना ${formatDate(st.cycleStartDate)} से चालू है, ₹${fee} फीस बकाया है`;
+                        waMessage = `नमस्ते ${st.name}, अभिज्ञान लाइब्रेरी (गुप्तेश्वर रोड, दौसा) में आपकी सीट (${st.seatNo}) की मासिक फीस (₹${fee}) अभी बकाया है। कृपया जल्द फीस जमा कराएं। - Himanshu Kumar Mudgal (9784443047)`;
+                    } else {
+                        alertNote = `महीना जल्द समाप्त: ${formatDate(st.expiryDate)}`;
+                        waMessage = `नमस्ते ${st.name}, अभिज्ञान लाइब्रेरी में आपकी सीट (${st.seatNo}) का महीना ${formatDate(st.expiryDate)} को समाप्त होने वाला है। कृपया समय पर रिन्यू कराएं। - Himanshu Kumar Mudgal (9784443047)`;
+                    }
+
+                    const item = document.createElement('div');
+                    item.className = 'alert-item';
+                    item.innerHTML = `
+                        <div>
+                            <div style="font-weight:800; font-size:0.9rem;">
+                                <span style="background:#312e81; color:#fff; padding:2px 6px; border-radius:5px; font-size:0.75rem;">${escapeHTML(st.seatNo)}</span>
+                                ${escapeHTML(st.name)}
+                            </div>
+                            <div style="font-size:0.75rem; color:#475569; margin-top:2px;">📞 ${escapeHTML(st.phone)} | <b>₹${fee}</b></div>
+                            <div style="font-size:0.74rem; color:#dc2626; font-weight:700;">${alertNote}</div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:5px; shrink:0;">
+                            <button onclick="openFeeModal('${st.id}')" class="btn btn-sm btn-success">💰 फीस जमा</button>
+                            <a href="https://wa.me/91${encodeURIComponent(st.phone)}?text=${encodeURIComponent(waMessage)}" target="_blank" class="btn btn-sm" style="background:#25D366; color:#fff;">WhatsApp</a>
+                        </div>
+                    `;
+                    alertList.appendChild(item);
+                }
+
+                const matchSearch = st.name.toLowerCase().includes(searchQuery) ||
+                                    st.seatNo.toLowerCase().includes(searchQuery) ||
+                                    st.phone.includes(searchQuery);
+
+                let matchStatus = true;
+                if (statusFilter === 'FEE_DUE') matchStatus = isFeeDue;
+                else if (statusFilter === 'EXPIRED') matchStatus = isExpired;
+                else if (statusFilter === 'SOON') matchStatus = isSoon;
+                else if (statusFilter === 'ACTIVE') matchStatus = (!isFeeDue && !isExpired);
+
+                if (matchSearch && matchStatus) {
+                    visibleRows++;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <b style="color:var(--primary); font-size:0.95rem;">${escapeHTML(st.seatNo)}</b>
+                            <div style="font-size:0.7rem; color:var(--text-muted);">${escapeHTML(st.shift)}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight:700;">${escapeHTML(st.name)}</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">📞 ${escapeHTML(st.phone)}</div>
+                        </td>
+                        <td style="font-size:0.77rem;">
+                            <div><b>महीना शुरू:</b> ${formatDate(st.cycleStartDate)}</div>
+                            <div style="color:var(--danger); font-weight:700;"><b>समाप्त:</b> ${formatDate(st.expiryDate)}</div>
+                        </td>
+                        <td>${feeBadgeHTML}</td>
+                        <td>${cycleBadgeHTML}</td>
+                        <td style="text-align:center;">
+                            <div style="display:flex; justify-content:center; gap:5px; flex-wrap:wrap;">
+                                <button onclick="openFeeModal('${st.id}')" class="btn btn-sm btn-success" title="फीस जमा करें या अगला महीना रिन्यू करें">💰 फीस जमा</button>
+                                <button onclick="openReceiptModal('${st.id}')" class="btn btn-sm btn-purple" title="रसीद">🧾 रसीद</button>
+                                <button onclick="editStudent('${st.id}')" class="btn btn-sm btn-warning" title="एडिट">✏️</button>
+                                <button onclick="deleteStudent('${st.id}')" class="btn btn-sm btn-danger" title="हटाएं">🗑️</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            document.getElementById('emptyState').classList.toggle('hidden', visibleRows > 0);
+            reminderSection.classList.toggle('hidden', alertsCount === 0);
+            document.getElementById('alertCountBadge').innerText = `${alertsCount} अलर्ट`;
+
+            document.getElementById('statTotal').innerText = students.length;
+            document.getElementById('statPaid').innerText = totalPaid;
+            document.getElementById('statFeeDue').innerText = totalFeeDue;
+            document.getElementById('statExpired').innerText = totalExpired;
+            document.getElementById('statRevenue').innerText = '₹' + totalRevenue.toLocaleString('en-IN');
+        }
+
+        setDefaultDates();
+        renderApp();
+    </script>
+</body>
+</html>
